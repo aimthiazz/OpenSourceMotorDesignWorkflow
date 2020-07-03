@@ -215,7 +215,7 @@ mi_zoomnatural()
 mi_createmesh()
 
 
-Current = [10] # Amps
+Current = [130] # Amps
 Strands = 9;
 ParallelWires = 13;
 Turns = 117 # 9 strands x 13 wires in parallel 
@@ -236,7 +236,7 @@ point=(r0In+10,5)
 for i in range(len(Circuit)):
     x,y=rotate(origin,point,radians(i*7.5))
     mi_selectlabel(x,y)
-    mi_setblockprop('19 AWG',1,0,Circuit[i],0,1,CoilDir[i]*Turns)
+    mi_setblockprop('19 AWG',1,0,Circuit[i],0,1,CoilDir[i]*Strands)
     mi_clearselected()
 
 
