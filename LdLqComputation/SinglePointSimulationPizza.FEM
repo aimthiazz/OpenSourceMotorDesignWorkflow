@@ -106,7 +106,7 @@
     <c1i> = 0
     <Mu_ssd> = 0
     <Sigma_ssd> = 0
-    <innerangle> = 96.5
+    <innerangle> = 89
     <outerangle> = 0
   <EndBdry>
 [BlockProps]  = 5
@@ -233,20 +233,20 @@
 [CircuitProps]  = 3
   <BeginCircuit>
     <CircuitName> = "A"
-    <TotalAmps_re> = 0
+    <TotalAmps_re> = 32.139380484326963
     <TotalAmps_im> = 0
     <CircuitType> = 1
   <EndCircuit>
   <BeginCircuit>
     <CircuitName> = "B"
-    <TotalAmps_re> = 0
+    <TotalAmps_re> = 17.101007166283445
     <TotalAmps_im> = 0
     <CircuitType> = 1
   <EndCircuit>
   <BeginCircuit>
     <CircuitName> = "C"
-    <TotalAmps_re> = 0
-    <TotalAmps_im> = 0
+    <TotalAmps_re> = -49.240387650610408
+    <TotalAmps_im> = -0
     <CircuitType> = 1
   <EndCircuit>
 [NumPoints] = 86
@@ -440,8 +440,8 @@
 [NumBlockLabels] = 15
 127.77499999999999	5	5	-1	0	0	1	1	0
 76.916749999999993	5	5	-1	0	0	1	1	0
-82.829999999999998	5	1	-1	0	0	1	1	0
-82	5	1	-1	0	0	1	1	0
+82.829999999999998	5	1	0.10000000000000001	0	0	1	1	0
+82	5	1	0.10000000000000001	0	0	1	1	0
 90.965000000000003	5	3	-1	1	0	1	9	0
 89.534150853768409	16.830539382166045	3	-1	1	0	1	9	0
 86.571347562872489	28.37310356919614	3	-1	2	0	1	-9	0

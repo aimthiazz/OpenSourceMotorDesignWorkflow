@@ -11,7 +11,11 @@ Author: Imthiaz Ahmed
 Number of workers defined based on number of problems. Since this particular 
 multiprocess is not computationally intensive making it equal to 12 workers
 """
+#TODO:
+# [] Deviation in simulation vs Experimental Results by 1.2
+
 Workers=12
+DeviationFactor=1.2
 import femm as fem
 from femm import *
 import math as math
@@ -53,7 +57,7 @@ def BEMFSimulation(BEMFSpeed):
         
         
         Length = 83.6;# #mm motor length
-        mi_probdef(0,'millimeters','planar',1e-8,Length,30,1)
+        mi_probdef(0,'millimeters','planar',1e-8,Length,1,1)
         
         ## Stator Geometry
         Nslots = 48;
@@ -129,12 +133,12 @@ def BEMFSimulation(BEMFSpeed):
         
         mi_addblocklabel(82.83,5) #Adding StatorAir
         mi_selectlabel(82.83,5)
-        mi_setblockprop('Air',0,0.1,'None',0,1,0)
+        mi_setblockprop('Air',0,0,'None',0,1,0)
         mi_clearselected()
         
         mi_addblocklabel(82,5) #Adding RotorAir
         mi_selectlabel(82,5)
-        mi_setblockprop('Air',0,0.1,'None',0,1,0)
+        mi_setblockprop('Air',0,0,'None',0,1,0)
         mi_clearselected()
         
         mi_addblocklabel(r0In+10,5) #Adding Winding
@@ -241,7 +245,7 @@ def BEMFSimulation(BEMFSpeed):
         for i in range(len(Circuit)):
             x,y=rotate(origin,point,radians(i*7.5))
             mi_selectlabel(x,y)
-            mi_setblockprop('19 AWG',1,0,Circuit[i],0,1,CoilDir[i]*Turns)
+            mi_setblockprop('19 AWG',1,0,Circuit[i],0,1,CoilDir[i]*Strands)
             mi_clearselected()
         
         
@@ -250,7 +254,7 @@ def BEMFSimulation(BEMFSpeed):
         PhaseArray=[40]
         niterat=90;
         InitialAngle=360/Nslots
-        StepAngle=(360/Npoles*2/niterat);
+        StepAngle=1
         k=0;
         Torque=0;
         step_vec=[];
@@ -357,19 +361,20 @@ def BEMFcomputation(fluxLinkageA,fluxLinkageB,fluxLinkageC,BEMFSpeed,niterat):
         step_vec=[]; 
         torq_vec=[]; 
         time_vec=[];
+        diffactor=Npoles/DeviationFactor
         
             
     
     
-        dt=2*(1/Freq/niterat)
+        dt=(1/(6*SpeedRPM))
         time=0
         for i in range(len(fluxLinkageA)):
-            time=time+dt*0.5
+            time=time+dt*1
             time_vec.append(time)
         
-        bemfA=(diff(fluxLinkageA)/dt) #Line Neutral
-        bemfB=(diff(fluxLinkageB)/dt)
-        bemfC=(diff(fluxLinkageC)/dt)
+        bemfA=diffactor*(diff(fluxLinkageA)/dt) #Line Neutral
+        bemfB=diffactor*(diff(fluxLinkageB)/dt)
+        bemfC=diffactor*(diff(fluxLinkageC)/dt)
         
         bemfTimeArray=[]
         bemfTimeArray.append(time_vec)
