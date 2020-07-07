@@ -25,7 +25,6 @@ from matplotlib.pyplot import *
 import time as myTime
 import pandas as pd
 import matplotlib.pyplot as plt
-import xlwt
 from statistics import mean
 from numpy import diff
 import concurrent.futures
