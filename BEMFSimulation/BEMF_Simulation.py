@@ -56,7 +56,7 @@ def BEMFSimulation(BEMFSpeed):
         
         
         Length = 83.6;# #mm motor length
-        mi_probdef(0,'millimeters','planar',1e-8,Length,1,1)
+        mi_probdef(0,'millimeters','planar',1e-8,Length,30,1)
         
         ## Stator Geometry
         Nslots = 48;
@@ -132,12 +132,12 @@ def BEMFSimulation(BEMFSpeed):
         
         mi_addblocklabel(82.83,5) #Adding StatorAir
         mi_selectlabel(82.83,5)
-        mi_setblockprop('Air',0,0,'None',0,1,0)
+        mi_setblockprop('Air',0.1,0,'None',0,1,0)
         mi_clearselected()
         
         mi_addblocklabel(82,5) #Adding RotorAir
         mi_selectlabel(82,5)
-        mi_setblockprop('Air',0,0,'None',0,1,0)
+        mi_setblockprop('Air',0.1,0,'None',0,1,0)
         mi_clearselected()
         
         mi_addblocklabel(r0In+10,5) #Adding Winding
