@@ -244,7 +244,6 @@ for i in range(len(Circuit)):
 mi_zoomnatural()
 PhaseArray=[40]
 niterat=90;
-InitialAngle=360/Nslots
 StepAngle=360/Npoles*2/niterat;
 k=0;
 Torque=0;
@@ -259,7 +258,6 @@ PhB_vec=[];
 PhC_vec=[];
 totTorq=[]
 CircProp=[]
-Angle=InitialAngle
 mi_modifyboundprop('SlidingBoundary',10,InitialAngle)
 startTime=float(myTime.time())
 startTimeInterval=float(myTime.time())
@@ -303,7 +301,7 @@ for j in range(len(PhaseArray)):
 
         # Torque = mo_gapintegral('SlidingBoundary',0)
         CircProp.append(mo_getcircuitproperties('A'))
-        Inductance=CircProp[i][2]/Current[0]
+        Inductance=(Npoles*CircProp[i][2]/Current[0])/1
         InductArray.append(Inductance*1000)
     
 
