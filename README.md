@@ -3,7 +3,7 @@
 
 Motor Simulation workflow using opensource/freeware tools. 
 
-![](Single_point_flux.PNG)
+![](Single_point_flux.GIF)
 
 
 
