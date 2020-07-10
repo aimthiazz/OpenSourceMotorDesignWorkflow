@@ -1,11 +1,7 @@
+
 # -*- coding: utf-8 -*-
 """
-Experimenting Motor Simulation with FEMM
-Toyota Prius Model is taken as benchmark model
-Pizza Model = Only a part of the model is simulated and results are ...
-...extrapolated
-multiprocessing is disabled
-
+DQ Inductance computation
 Author: Imthiaz Ahmed
 """
 
@@ -29,7 +25,6 @@ savedir=cwd+'\Results'
 def rotate(origin, point, angle):
     """
     Rotate a point counterclockwise by a given angle around a given origin.
-
     The angle should be given in radians.
     """
     ox, oy = origin
@@ -44,7 +39,7 @@ newdocument(0)
 
 
 Length = 83.6;# #mm motor length
-mi_probdef(0,'millimeters','planar',1e-8,Length,1,1)
+mi_probdef(0,'millimeters','planar',1e-8,Length,30,1)
 
 ## Stator Geometry
 Nslots = 48;
@@ -244,7 +239,8 @@ for i in range(len(Circuit)):
 mi_zoomnatural()
 PhaseArray=[40]
 niterat=90;
-StepAngle=360/Npoles*2/niterat;
+StepAngle=1;
+Angle=0
 k=0;
 Torque=0;
 step_vec=[];
@@ -258,6 +254,7 @@ PhB_vec=[];
 PhC_vec=[];
 totTorq=[]
 CircProp=[]
+InitialAngle=0
 mi_modifyboundprop('SlidingBoundary',10,InitialAngle)
 startTime=float(myTime.time())
 startTimeInterval=float(myTime.time())
@@ -265,6 +262,11 @@ avgTorqArray=[]
 InitialAngle=0
 InductArray=[]
 AngleArray=[]
+LdAngle=30
+LqAngle=55.5
+Ld=[]
+Lq=[]
+Current=[50,75,100,125,150,175,200,225,250]
 for j in range(len(PhaseArray)):
     Phase=PhaseArray[j]
     time=0
@@ -275,72 +277,52 @@ for j in range(len(PhaseArray)):
     PhA_vec=[]; 
     PhB_vec=[]; 
     PhC_vec=[];
-    CircProp=[]
-    for i in range((niterat)):
-        Curr_PhA = Current[0]*sin(2*pi*Freq*time+Phase*pi/180); 
-        Curr_PhB = Current[0]*sin(2*pi*Freq*time+Phase*pi/180+2*pi/3);   
-        Curr_PhC = Current[0]*sin(2*pi*Freq*time+Phase*pi/180+4*pi/3);
+    LdCircProp=[]
+    LqCircProp=[]
+    for i in range(len(Current)):
+        Curr_PhA = Current[i]*sin(2*pi*Freq*time+Phase*pi/180); 
+        Curr_PhB = Current[i]*sin(2*pi*Freq*time+Phase*pi/180+2*pi/3);   
+        Curr_PhC = Current[i]*sin(2*pi*Freq*time+Phase*pi/180+4*pi/3);
 
         mi_modifycircprop('A',1,Curr_PhA) 
         mi_modifycircprop('B',1,Curr_PhB) 
         mi_modifycircprop('C',1,Curr_PhC) 
-        mi_modifyboundprop('SlidingBoundary',10,InitialAngle)
-
-        mi_saveas('SinglePointSimulationPizza.FEM')
+        
+        
+        mi_modifyboundprop('SlidingBoundary',10,LdAngle)
+        mi_saveas('LdLqComputation.FEM')
+        mi_clearselected() 
+        smartmesh(1)
+        mi_analyze(0); 
+        mi_loadsolution();
+        LdCircProp.append(mo_getcircuitproperties('A'))
+        Ld.append(1000*((Npoles*LdCircProp[i][2]/Current[i])/1.2))
+        
+        
+        mi_modifyboundprop('SlidingBoundary',10,LqAngle)
+        mi_saveas('LdLqComputation.FEM')
         mi_clearselected() 
         smartmesh(1)
         mi_analyze(0);  
         mi_loadsolution();
-        # mo_showdensityplot(1,0,2,0.0,'mag');
-        # mo_savebitmap('SinglePoimt'+'Current'+str(Current[j])+'_'+str(i)+'.png')
+        LqCircProp.append(mo_getcircuitproperties('A'))
+        Lq.append(1000*((Npoles*LqCircProp[i][2]/Current[i])/1.2))
         
-        Angle=Angle+StepAngle
-        AngleArray.append(InitialAngle)
-        InitialAngle=InitialAngle+1
         
 
-        # Torque = mo_gapintegral('SlidingBoundary',0)
-        CircProp.append(mo_getcircuitproperties('A'))
-        Inductance=(Npoles*CircProp[i][2]/Current[0])/1
-        InductArray.append(Inductance*1000)
     
 
-        time_vec.append(time) 
-        Phase_vec.append(Phase) 
-        PhA_vec.append(Curr_PhA)
-        PhB_vec.append(Curr_PhB)
-        PhC_vec.append(Curr_PhC)
-        torq_vec.append(Torque)
-        # time = time + 1/Freq/niterat  
-        # Phase = Phase + Phase_step; # deg 
-        #plot(time_vec,PhA_vec)
-        title('Torque vs Time-Live Plot')
-        xlabel('Time(Sec)')
-        ylabel('Torque(Nm)')
-        plot(AngleArray,InductArray)
-        pause(0.05)
-        nowTime=myTime.time()
-        # print("Time",abs(startTimeInterval-nowTime))
-        startTimeInterval=nowTime;
-    totTorq.append(torq_vec)
-    # avgTorqArray.append(mean(torq_vec))
-    close()
-    plot(AngleArray,InductArray,color='b')
-    # ylim(ymin=0)
-    title('Torque vs Time')
-    xlabel('Time(sec)')
-    ylabel('Torque(Nm)')
-    avgtorq=axhline(y=mean(torq_vec),color='r',label='Avg Torque='
-                    +str(round(mean(torq_vec),2))+' Nm')
-    legend()
-    # savefig(savedir+'\Torque_vs_Time.png')
-    print('Average Torque for Phase '+str(Phase)+':'+str(round(mean(torq_vec),2))+' Nm')
-    print('Inductance : ',Inductance*1000)
-    print('Current :',Current[0])
-show()
+
+
+
+
+
 nowTime=myTime.time()
+title('DQ Inductance Plot')
+xlabel('Current(A)')
+ylabel('Inductance(mH)')
+plot(Current,Ld,label='Ld',color='b')
+plot(Current,Lq,label='Lq',color='r')
+legend(loc='best')
 print("Total Time",abs(startTime-nowTime))
-
-
-    
-        
+savefig(savedir+'\LdLqPlots.png')
